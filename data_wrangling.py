@@ -18,9 +18,12 @@ def putAlltogether(files_path, ext):   #ext must be a string of the extension ty
     frame = frame[cols]
     return frame.sort_values(['station', 'date'])
 
-def drop_null(df, percent):
-    for column in df:
-        result = (df[column].isnull().sum()/len(df))
-        if result >= percent:
-            del df[column]
-    return df
+def drop_null(df):
+    null_cols = df.columns[df.isnull().sum() > 500000]
+    nonull = df.drop(null_cols, axis=1, inplace = True)
+    return nonull
+
+def depurating_data(df): 
+    df.fillna("0", inplace=True)
+    df = df.drop_duplicates(subset=['date', 'station']).dropna()
+
